@@ -1,0 +1,22 @@
+@import 'vendor/reset.css';
+
+body {
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.title {
+  font-size: 90px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+
+  border-bottom: 1px solid #000;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-columns: 264px 1fr;
+  column-gap: 20px;
+}
