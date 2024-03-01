@@ -8,7 +8,7 @@ export const Header = () => {
         <div className={styles.inner}>
           <h1 className={styles.logo}>Valantis</h1>
           <a
-            href="/https://github.com/Donal-Noye/valantis"
+            href="https://github.com/Donal-Noye/valantis"
             target="_blank"
             className={styles.link}
           >
