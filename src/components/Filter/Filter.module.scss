@@ -54,33 +54,3 @@
   align-items: flex-start;
   gap: 10px;
 }
-
-//.update {
-//  display: flex;
-//  align-self: center;
-//  padding: 10px;
-//  position: relative;
-//
-//  &:after {
-//    content: "";
-//    display: block;
-//    width: 0;
-//    height: 2px;
-//
-//    background-color: #000000;
-//
-//    position: absolute;
-//    bottom: 0;
-//    left: 50%;
-//    z-index: 1;
-//
-//    transform: translateX(-50%);
-//    transition: width .3s ease;
-//  }
-//
-//  &:hover {
-//    &:after {
-//      width: 100%;
-//    }
-//  }
-//}

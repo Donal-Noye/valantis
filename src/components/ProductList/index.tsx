@@ -7,11 +7,12 @@ import { useEffect } from "react";
 export const ProductList = ({
   filteredProducts,
   setFilteredProducts,
+  products
 }: {
-  filteredProducts: any;
-  setFilteredProducts: any;
+  filteredProducts: ProductProps[];
+  setFilteredProducts: (value: ProductProps[]) => void;
+  products: ProductProps[]
 }) => {
-  const products = useProductStore((state: any) => state.allProducts);
   const filters = useProductStore((state: any) => state.filters);
 
   useEffect(() => {
@@ -29,7 +30,7 @@ export const ProductList = ({
       return filteredByName && filteredByPrice && filteredByBrand;
     });
     setFilteredProducts(filtered);
-  }, [products, filters]);
+  }, [products, filters, setFilteredProducts]);
 
   return (
     <ul className={styles.list}>

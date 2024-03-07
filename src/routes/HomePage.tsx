@@ -14,16 +14,19 @@ import { Pagination } from "../components/Pagination";
 import { ProductProps } from "../lib/types";
 
 function HomePage() {
-  const setProducts = useProductStore((state: any) => state.setProducts);
+  const [products, setProducts] = useState<ProductProps[]>([]);
+  const filters = useProductStore((state: any) => state.filters);
+
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [brands, setBrands] = useState<string[]>([]);
   const [prices, setPrices] = useState<number[]>([]);
   const [name, setName] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState<ProductProps[]>([]);
+
   const location = useLocation();
   const navigate = useNavigate();
-
   const pageLimit = 50;
 
   useEffect(() => {
@@ -45,12 +48,14 @@ function HomePage() {
                   uniqueItems[item.id] = item;
                 }
               });
+
               const uniqueItemsArray = Object.values(uniqueItems);
               if (uniqueItemsArray.length > pageLimit + 1) {
                 uniqueItemsArray.pop();
                 setTotalPages(totalPages);
               }
               setProducts(uniqueItemsArray);
+              setTotalPages(Math.ceil(result.length / pageLimit));
               setLoading(false);
             }
           })
@@ -75,19 +80,23 @@ function HomePage() {
       .catch((error) => {
         console.error("API Error: ", error);
       });
-  }, []);
+  }, [pageLimit]);
 
   useEffect(() => {
-    getProductFilterByName(name)
-      .then((result) => {
-        if (result && result.length > 0) {
-          setProducts(result);
-        }
-      })
-      .catch((error) => {
-        console.error("API Error: ", error);
-      });
-  }, [name, setProducts]);
+    if (filters.name) {
+      getProductFilterByName(name)
+        .then((result) => {
+          if (result && result.length > 0) {
+            setFilteredProducts(result);
+          }
+        })
+        .catch((error) => {
+          console.error("API Error: ", error);
+        });
+    } else {
+      setFilteredProducts(products);
+    }
+  }, [filters.name, name, products]);
 
   useEffect(() => {
     getProductFields("brand", 0, 100)
@@ -97,7 +106,7 @@ function HomePage() {
       .catch((error) => {
         console.error("API Error: ", error);
       });
-  }, []);
+  }, [filters.brand]);
 
   useEffect(() => {
     getProductFields("price", 0, 100)
@@ -107,9 +116,7 @@ function HomePage() {
       .catch((error) => {
         console.error("API Error: ", error);
       });
-  }, []);
-
-  const [filteredProducts, setFilteredProducts] = useState<ProductProps[]>([]);
+  }, [filters.price]);
 
   const handlePageClick = (newPage: number) => {
     if (newPage >= 0 && newPage < totalPages) {
@@ -136,10 +143,11 @@ function HomePage() {
         ) : (
           <div>
             <ProductList
+              products={products}
               filteredProducts={filteredProducts}
               setFilteredProducts={setFilteredProducts}
             />
-            {totalPages > 1 && filteredProducts.length > 50 && (
+            {totalPages > 1 && filteredProducts.length >= pageLimit && (
               <Pagination
                 page={page}
                 handlePageClick={handlePageClick}
