@@ -15,7 +15,6 @@ import { ProductProps } from "../lib/types";
 
 function HomePage() {
   const setProducts = useProductStore((state: any) => state.setProducts);
-  const setAllProducts = useProductStore((state: any) => state.setAllProducts);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
