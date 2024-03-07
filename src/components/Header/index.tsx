@@ -10,6 +10,7 @@ export const Header = () => {
           <a
             href="https://github.com/Donal-Noye/valantis"
             target="_blank"
+            rel="noreferrer"
             className={styles.link}
           >
             Исходный код

@@ -34,7 +34,7 @@ function HomePage() {
 
   useEffect(() => {
     setLoading(true);
-    getProductIds(page * pageLimit, pageLimit)
+    getProductIds(page * pageLimit, pageLimit + 1)
       .then((result) => {
         getProductItems(result)
           .then((productsResult) => {
@@ -46,6 +46,10 @@ function HomePage() {
                 }
               });
               const uniqueItemsArray = Object.values(uniqueItems);
+              if (uniqueItemsArray.length > pageLimit) {
+                uniqueItemsArray.pop();
+                setTotalPages(totalPages + 1);
+              }
               setProducts(uniqueItemsArray);
               setLoading(false);
             }
@@ -59,7 +63,7 @@ function HomePage() {
         console.error("API Error: ", error);
         setLoading(false);
       });
-  }, [page, setProducts]);
+  }, [page, setProducts, pageLimit, totalPages, setLoading]);
 
   useEffect(() => {
     getProductIds(0, 100)
