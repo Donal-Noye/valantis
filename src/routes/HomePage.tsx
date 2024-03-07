@@ -15,6 +15,7 @@ import { ProductProps } from "../lib/types";
 
 function HomePage() {
   const setProducts = useProductStore((state: any) => state.setProducts);
+  const setAllProducts = useProductStore((state: any) => state.setAllProducts);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -46,9 +47,9 @@ function HomePage() {
                 }
               });
               const uniqueItemsArray = Object.values(uniqueItems);
-              if (uniqueItemsArray.length > pageLimit) {
+              if (uniqueItemsArray.length > pageLimit + 1) {
                 uniqueItemsArray.pop();
-                setTotalPages(totalPages + 1);
+                setTotalPages(totalPages);
               }
               setProducts(uniqueItemsArray);
               setLoading(false);
@@ -87,7 +88,9 @@ function HomePage() {
       .catch((error) => {
         console.error("API Error: ", error);
       });
+  }, [name, setProducts]);
 
+  useEffect(() => {
     getProductFields("brand", 0, 100)
       .then((result) => {
         setBrands(result.filter((brand: string | null) => brand !== null));
@@ -95,7 +98,9 @@ function HomePage() {
       .catch((error) => {
         console.error("API Error: ", error);
       });
+  }, []);
 
+  useEffect(() => {
     getProductFields("price", 0, 100)
       .then((result) => {
         setPrices(result);
@@ -103,12 +108,14 @@ function HomePage() {
       .catch((error) => {
         console.error("API Error: ", error);
       });
-  }, [name, setProducts]);
+  }, []);
+
+  const [filteredProducts, setFilteredProducts] = useState<ProductProps[]>([]);
 
   const handlePageClick = (newPage: number) => {
     if (newPage >= 0 && newPage < totalPages) {
       setPage(newPage);
-      if (newPage === 0) {
+      if (newPage === 0 || filteredProducts.length <= 50) {
         navigate("/");
       } else {
         navigate(`?page=${newPage}`);
@@ -129,12 +136,17 @@ function HomePage() {
           <Loader />
         ) : (
           <div>
-            <ProductList />
-            <Pagination
-              page={page}
-              handlePageClick={handlePageClick}
-              totalPages={totalPages}
+            <ProductList
+              filteredProducts={filteredProducts}
+              setFilteredProducts={setFilteredProducts}
             />
+            {totalPages > 1 && filteredProducts.length > 50 && (
+              <Pagination
+                page={page}
+                handlePageClick={handlePageClick}
+                totalPages={totalPages}
+              />
+            )}
           </div>
         )}
       </div>
