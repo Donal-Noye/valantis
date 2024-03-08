@@ -121,11 +121,8 @@ function HomePage() {
   const handlePageClick = (newPage: number) => {
     if (newPage >= 0 && newPage < totalPages) {
       setPage(newPage);
-      if (newPage === 0 || filteredProducts.length <= 50) {
-        navigate("/");
-      } else {
-        navigate(`?page=${newPage}`);
-      }
+      const nextPageURL = newPage === 0 ? "/" : `?page=${newPage}`;
+      navigate(nextPageURL);
     }
   };
 

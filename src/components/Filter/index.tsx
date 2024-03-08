@@ -76,7 +76,6 @@ export const Filter: React.FC<FilterProps> = ({ brands, prices, setName }) => {
           </select>
         </div>
       </div>
-      {/*<button className={styles.update} onClick={updateFilters}>Применить фильтры</button>*/}
     </div>
   );
 };
