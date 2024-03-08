@@ -28,9 +28,6 @@ export function fetchApi(requestData: any) {
     .then((data) => {
       return data.result;
     })
-    .catch((error) => {
-      console.error("API Error:", error);
-    });
 }
 
 export function getProductIds(offset: number, limit: number) {
