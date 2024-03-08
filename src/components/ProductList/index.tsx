@@ -4,19 +4,25 @@ import { ProductProps } from "../../lib/types";
 import useProductStore from "../../hooks/useProductStore";
 import { useEffect } from "react";
 
+interface ProductListProps {
+  filteredProducts: ProductProps[];
+  setFilteredProducts: (value: ProductProps[]) => void;
+  products: ProductProps[];
+  allProducts: ProductProps[];
+}
+
 export const ProductList = ({
   filteredProducts,
   setFilteredProducts,
-  products
-}: {
-  filteredProducts: ProductProps[];
-  setFilteredProducts: (value: ProductProps[]) => void;
-  products: ProductProps[]
-}) => {
+  products,
+  allProducts,
+}: ProductListProps) => {
   const filters = useProductStore((state: any) => state.filters);
 
   useEffect(() => {
-    const filtered = products.filter((product: ProductProps) => {
+    const sourceProducts =
+      filters.name || filters.price || filters.brand ? allProducts : products;
+    const filtered = sourceProducts.filter((product: ProductProps) => {
       if (!filters.name && !filters.price && !filters.brand) {
         return true;
       }
@@ -24,13 +30,14 @@ export const ProductList = ({
       const filteredByName =
         !filters.name ||
         product.product.toLowerCase().includes(filters.name.toLowerCase());
-      const filteredByPrice = !filters.price || product.price === filters.price;
+      const filteredByPrice =
+        !filters.price || product.price === filters.price;
       const filteredByBrand = !filters.brand || product.brand === filters.brand;
 
       return filteredByName && filteredByPrice && filteredByBrand;
     });
     setFilteredProducts(filtered);
-  }, [products, filters, setFilteredProducts]);
+  }, [products, allProducts, filters, setFilteredProducts]);
 
   return (
     <ul className={styles.list}>

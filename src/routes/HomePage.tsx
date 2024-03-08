@@ -15,6 +15,7 @@ import { ProductProps } from "../lib/types";
 
 function HomePage() {
   const [products, setProducts] = useState<ProductProps[]>([]);
+  const [allProducts, setAllProducts] = useState<ProductProps[]>([]);
   const filters = useProductStore((state: any) => state.filters);
 
   const [loading, setLoading] = useState(false);
@@ -34,6 +35,39 @@ function HomePage() {
     const currentPage = parseInt(searchParams.get("page") || "0", 10);
     setPage(currentPage);
   }, [location.search]);
+
+  useEffect(() => {
+    setLoading(true);
+    getProductIds(0, 100)
+      .then((result) => {
+        getProductItems(result)
+          .then((productsResult) => {
+            if (productsResult && productsResult.length > 0) {
+              const uniqueItems: { [key: string]: ProductProps } = {};
+              productsResult.forEach((item: ProductProps) => {
+                if (!uniqueItems[item.id]) {
+                  uniqueItems[item.id] = item;
+                }
+              });
+
+              const uniqueItemsArray = Object.values(uniqueItems);
+              if (uniqueItemsArray.length > pageLimit + 1) {
+                uniqueItemsArray.pop();
+              }
+              setAllProducts(uniqueItemsArray);
+              setLoading(false);
+            }
+          })
+          .catch((error) => {
+            console.error("API Error: ", error);
+            setLoading(false);
+          });
+      })
+      .catch((error) => {
+        console.error("API Error: ", error);
+        setLoading(false);
+      });
+  }, [page, setProducts, pageLimit, totalPages, setLoading]);
 
   useEffect(() => {
     setLoading(true);
@@ -131,6 +165,7 @@ function HomePage() {
       <h1 className="title">Ювелирные изделия</h1>
       <div className="wrapper">
         <Filter
+          loading={loading}
           brands={brands}
           prices={prices}
           setName={setName}
@@ -140,6 +175,7 @@ function HomePage() {
         ) : (
           <div>
             <ProductList
+              allProducts={allProducts}
               products={products}
               filteredProducts={filteredProducts}
               setFilteredProducts={setFilteredProducts}

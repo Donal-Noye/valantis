@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from "react";
-import styles from './Filter.module.scss';
-import useProductStore from '../../hooks/useProductStore';
+import styles from "./Filter.module.scss";
+import useProductStore from "../../hooks/useProductStore";
 
 interface FilterProps {
   brands: string[];
   prices: number[];
   setName: (value: string) => void;
+  loading: boolean;
 }
 
-export const Filter: React.FC<FilterProps> = ({ brands, prices, setName }) => {
-  const [searchName, setSearchName] = useState('');
+export const Filter: React.FC<FilterProps> = ({
+  brands,
+  prices,
+  setName,
+  loading,
+}) => {
+  const [searchName, setSearchName] = useState("");
   const [selectedPrice, setSelectedPrice] = useState<number | null>(null);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   const setFilter = useProductStore((state: any) => state.setFilter);
@@ -23,7 +29,7 @@ export const Filter: React.FC<FilterProps> = ({ brands, prices, setName }) => {
       });
     };
 
-    updateFilters()
+    updateFilters();
   }, [setFilter, searchName, selectedBrand, selectedPrice]);
 
   return (
@@ -45,16 +51,20 @@ export const Filter: React.FC<FilterProps> = ({ brands, prices, setName }) => {
         <div className={styles.prices}>
           <select
             className={styles.input}
-            value={selectedPrice || ''}
+            value={selectedPrice || ""}
             onChange={(e) => {
-              const price = e.target.value === '' ? null : parseInt(e.target.value);
+              const price =
+                e.target.value === "" ? null : parseInt(e.target.value);
               setSelectedPrice(price);
             }}
           >
             <option value="">Все цены</option>
-            {prices && prices.map((price, idx) => (
-              <option key={idx} value={price}>{price}</option>
-            ))}
+            {prices &&
+              prices.map((price, idx) => (
+                <option key={idx} value={price}>
+                  {price}
+                </option>
+              ))}
           </select>
         </div>
       </div>
@@ -63,19 +73,25 @@ export const Filter: React.FC<FilterProps> = ({ brands, prices, setName }) => {
         <div className={styles.brands}>
           <select
             className={styles.input}
-            value={selectedBrand || ''}
+            value={selectedBrand || ""}
             onChange={(e) => {
-              const brand = e.target.value === '' ? null : e.target.value;
+              const brand = e.target.value === "" ? null : e.target.value;
               setSelectedBrand(brand);
             }}
           >
             <option value="">Все бренды</option>
-            {brands && brands.map((brand) => (
-              <option key={brand} value={brand}>{brand}</option>
-            ))}
+            {brands &&
+              brands.map((brand) => (
+                <option key={brand} value={brand}>
+                  {brand}
+                </option>
+              ))}
           </select>
         </div>
       </div>
+      {loading && (
+        <span className={styles.loader}></span>
+      )}
     </div>
   );
 };
